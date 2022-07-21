@@ -1,0 +1,20 @@
+# 🔐
+*secret*
+*SECRET*
+*.ppk
+*.pri
+*.pub
+*.pem
+*.crt
+*.cer
+*.key
+*.pem
+*.rsa
+####
+__init__.py
+*.pyc
+__pycache__/*
+*venv*
+*.jsonl*
+*.bson*
+*.tar.gz
