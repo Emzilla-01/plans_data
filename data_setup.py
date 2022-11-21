@@ -28,7 +28,26 @@ def setup_data(db, data_url_md5_dict):
         data_url_md5_dict[itm[0]].setdefault("archive", download_file(itm))
         with tarfile.open(data_url_md5_dict[itm[0]].get("archive")) as t_f:      
             data_url_md5_dict[itm[0]].setdefault("archive_fns", t_f.getnames())
-            t_f.extractall(".")
+            def is_within_directory(directory, target):
+                
+                abs_directory = os.path.abspath(directory)
+                abs_target = os.path.abspath(target)
+            
+                prefix = os.path.commonprefix([abs_directory, abs_target])
+                
+                return prefix == abs_directory
+            
+            def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+            
+                for member in tar.getmembers():
+                    member_path = os.path.join(path, member.name)
+                    if not is_within_directory(path, member_path):
+                        raise Exception("Attempted Path Traversal in Tar File")
+            
+                tar.extractall(path, members, numeric_owner=numeric_owner) 
+                
+            
+            safe_extract(t_f, ".")
         for unpacked_fn in data_url_md5_dict.get(itm[0]).get("archive_fns"):
             with open(unpacked_fn, "rt") as json_file:
                 json_list = list(json_file)
